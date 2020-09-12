@@ -1,0 +1,71 @@
+buildscript {
+	ext {
+		springBootVersion = '2.3.3.RELEASE'
+		gradleDependencyManagementVersion = '1.0.10.RELEASE'
+		fastjsonVersion = '1.2.58'
+		lombokPluginVersion = '4.1.6'
+	}
+	repositories {
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+		mavenCentral()
+		jcenter()
+	}
+
+	dependencies {
+		classpath (
+				// SpringBoot gradle 插件
+				"org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}",
+				// 依赖管理
+				"io.spring.gradle:dependency-management-plugin:${gradleDependencyManagementVersion}",
+				"io.freefair.gradle:lombok-plugin:${lombokPluginVersion}"
+		)
+	}
+}
+
+allprojects{
+	group 'com.hyz.springboot'
+	version '0.0.1-SNAPSHOT'
+}
+
+subprojects {
+	apply plugin: "idea"
+	apply plugin: "java"
+	apply plugin: "io.spring.dependency-management"
+	apply plugin: "io.freefair.lombok"
+
+	sourceCompatibility = 11
+	targetCompatibility = 11
+
+	//指定字符集
+	tasks.withType(JavaCompile) {
+		options.encoding = "UTF-8"
+	}
+	[compileJava, javadoc, compileTestJava]*.options*.encoding = "UTF-8"
+
+	repositories {
+		maven{ url'http://maven.aliyun.com/nexus/content/groups/public/'}
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+	}
+
+	dependencies {
+		// 如果这里配置了jar依赖，所有子项目共享，使用gradle的依赖特性传递
+		implementation (
+				"com.alibaba:fastjson:${fastjsonVersion}",
+				"org.springframework.boot:spring-boot-starter:${springBootVersion}",
+				"org.springframework.boot:spring-boot-starter-actuator:${springBootVersion}",
+				"org.springframework.boot:spring-boot-starter-web:${springBootVersion}",
+		)
+		testImplementation("org.springframework.boot:spring-boot-starter-test:${springBootVersion}") {
+			exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+		}
+
+	}
+}
+wrapper {
+	gradleVersion = '6.0'
+	distributionType = 'all'
+}
