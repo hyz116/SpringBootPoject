@@ -2,10 +2,10 @@ spring:
   application:
     name: validation
 
-server:
-  port: 8080
-  servlet:
-    context-path: /validation
+#server:
+#  port: 8080
+#  servlet:
+#    context-path: /validation
 
 management:
   endpoints:
